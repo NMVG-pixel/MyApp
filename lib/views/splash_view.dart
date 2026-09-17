@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 class SplashView extends StatefulWidget {
@@ -31,8 +32,6 @@ class _SplashViewState extends State<SplashView>
 
     Timer(const Duration(seconds: 2), () {
       if (!mounted) return;
-
-      
     });
   }
 
@@ -49,15 +48,13 @@ class _SplashViewState extends State<SplashView>
       body: Center(
         child: ScaleTransition(
           scale: _animation,
-          child: const Text(
-            'DOCS ADMINS',
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-            ),
+          child: Image.asset(
+            'assets/images/logo.png',
+            width: 180,
           ),
         ),
       ),
     );
   }
 }
+
