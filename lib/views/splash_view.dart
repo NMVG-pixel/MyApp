@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import 'home_view.dart';
+
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
 
@@ -31,8 +33,15 @@ class _SplashViewState extends State<SplashView>
     _animationController.forward();
 
     Timer(const Duration(seconds: 2), () {
-      if (!mounted) return;
-    });
+  if (!mounted) return;
+
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (context) => const HomeView(),
+    ),
+  );
+});
   }
 
   @override
