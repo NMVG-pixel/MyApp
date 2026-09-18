@@ -146,7 +146,9 @@ class HomeView extends StatelessWidget {
                             ),
                           ),
                           TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              // Navigation vers le catalogue à venir.
+                            },
                             child: const Text(
                               'Voir tout',
                               style: TextStyle(
@@ -199,7 +201,7 @@ class HomeView extends StatelessWidget {
             // =========================
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 24, 20, 110),
+                padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -234,54 +236,6 @@ class HomeView extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ),
-
-      // =========================
-      // NAVIGATION BASSE
-      // =========================
-      bottomNavigationBar: SafeArea(
-        top: false,
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 8,
-          ),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: primaryColor.withValues(alpha: 0.15),
-                blurRadius: 12,
-                offset: const Offset(0, -4),
-              ),
-            ],
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildBottomItem(
-                icon: Icons.home,
-                label: 'Accueil',
-                active: true,
-              ),
-              _buildBottomItem(
-                icon: Icons.description_outlined,
-                label: 'Documents',
-                active: false,
-              ),
-              _buildBottomItem(
-                icon: Icons.history,
-                label: 'Historique',
-                active: false,
-              ),
-              _buildBottomItem(
-                icon: Icons.person_outline,
-                label: 'Profil',
-                active: false,
-              ),
-            ],
-          ),
         ),
       ),
     );
@@ -398,7 +352,9 @@ class HomeView extends StatelessWidget {
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        onTap: () {},
+        onTap: () {
+          // Navigation vers les documents de la catégorie à venir.
+        },
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Column(
@@ -422,47 +378,6 @@ class HomeView extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildBottomItem({
-    required IconData icon,
-    required String label,
-    required bool active,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 6,
-      ),
-      decoration: BoxDecoration(
-        color: active
-            ? const Color(0xFFD3E2ED)
-            : Colors.transparent,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            color: active
-                ? const Color(0xFF1A237E)
-                : const Color(0xFFC6C5D4),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              color: active
-                  ? const Color(0xFF1A237E)
-                  : const Color(0xFFC6C5D4),
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
       ),
     );
   }

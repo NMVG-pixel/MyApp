@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'home_view.dart';
+import 'main_navigation_view.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
@@ -38,7 +38,7 @@ class _SplashViewState extends State<SplashView>
   Navigator.pushReplacement(
     context,
     MaterialPageRoute(
-      builder: (context) => const HomeView(),
+      builder: (context) => const MainNavigationView(),
     ),
   );
 });

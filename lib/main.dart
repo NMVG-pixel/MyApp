@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import 'views/main_navigation_view.dart';
+
 import 'views/splash_view.dart';
 
 void main() {
