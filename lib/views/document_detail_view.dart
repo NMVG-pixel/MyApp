@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/document_model.dart';
+import 'document_form_view.dart';
 
 class DocumentDetailView extends StatelessWidget {
   final DocumentModel document;
@@ -21,6 +22,9 @@ class DocumentDetailView extends StatelessWidget {
     return Scaffold(
       backgroundColor: backgroundColor,
 
+      // =========================
+      // APP BAR
+      // =========================
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -45,8 +49,16 @@ class DocumentDetailView extends StatelessWidget {
         ),
       ),
 
+      // =========================
+      // CONTENU
+      // =========================
       body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(20, 24, 20, 140),
+        padding: const EdgeInsets.fromLTRB(
+          20,
+          24,
+          20,
+          140,
+        ),
         child: Column(
           children: [
             // =========================
@@ -140,8 +152,8 @@ class DocumentDetailView extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Row(
-                children: const [
+              child: const Row(
+                children: [
                   Expanded(
                     child: Text(
                       'Document disponible',
@@ -249,7 +261,14 @@ class DocumentDetailView extends StatelessWidget {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                // Le formulaire sera branché ici.
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DocumentFormView(
+                      document: document,
+                    ),
+                  ),
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF252C8F),
@@ -273,6 +292,9 @@ class DocumentDetailView extends StatelessWidget {
     );
   }
 
+  // =========================
+  // AVANTAGE
+  // =========================
   Widget _buildBenefit({
     required IconData icon,
     required String text,
@@ -304,6 +326,9 @@ class DocumentDetailView extends StatelessWidget {
     );
   }
 
+  // =========================
+  // SÉPARATEUR
+  // =========================
   Widget _buildDivider() {
     return const Divider(
       height: 1,
