@@ -38,6 +38,8 @@ dependencies:
   printing: 5.14.3
   shared_preferences: 2.5.5
   shared_preferences_web: 2.4.3
+  firebase_core: ^4.15.0
+  firebase_auth: ^6.7.0
 
 dev_dependencies:
   flutter_test:
