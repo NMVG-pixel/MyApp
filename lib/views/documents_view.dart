@@ -5,7 +5,12 @@ import '../models/document_model.dart';
 import 'document_detail_view.dart';
 
 class DocumentsView extends StatefulWidget {
-  const DocumentsView({super.key});
+  final String initialCategory;
+
+  const DocumentsView({
+    super.key,
+    this.initialCategory = 'Tous',
+  });
 
   @override
   State<DocumentsView> createState() => _DocumentsViewState();
@@ -31,7 +36,12 @@ class _DocumentsViewState extends State<DocumentsView> {
   @override
   void initState() {
     super.initState();
+
     _documents = _controller.getDocuments();
+
+    if (_categories.contains(widget.initialCategory)) {
+      _selectedCategory = widget.initialCategory;
+    }
   }
 
   List<DocumentModel> get _filteredDocuments {
@@ -47,10 +57,29 @@ class _DocumentsViewState extends State<DocumentsView> {
               ) ||
           document.description.toLowerCase().contains(
                 _searchQuery.toLowerCase(),
+              ) ||
+          document.type.toLowerCase().contains(
+                _searchQuery.toLowerCase(),
+              ) ||
+          document.variant.toLowerCase().contains(
+                _searchQuery.toLowerCase(),
               );
 
       return matchesCategory && matchesSearch;
     }).toList();
+  }
+
+  @override
+  void didUpdateWidget(covariant DocumentsView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.initialCategory != oldWidget.initialCategory &&
+        _categories.contains(widget.initialCategory)) {
+      setState(() {
+        _selectedCategory = widget.initialCategory;
+        _searchQuery = '';
+      });
+    }
   }
 
   @override
@@ -123,6 +152,7 @@ class _DocumentsViewState extends State<DocumentsView> {
                     onSelected: (_) {
                       setState(() {
                         _selectedCategory = category;
+                        _searchQuery = '';
                       });
                     },
                     selectedColor: const Color(0xFFD3E2ED),

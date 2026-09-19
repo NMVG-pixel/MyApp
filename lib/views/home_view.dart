@@ -1,8 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../controllers/document_controller.dart';
 import '../controllers/home_controller.dart';
 import '../models/document_category.dart';
+import '../models/document_model.dart';
+import 'document_detail_view.dart';
+import 'documents_view.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -15,8 +19,14 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final HomeController controller = HomeController();
-    final List<DocumentCategory> categories = controller.getCategories();
+    final HomeController homeController = HomeController();
+    final DocumentController documentController = DocumentController();
+
+    final List<DocumentCategory> categories =
+        homeController.getCategories();
+
+    final List<DocumentModel> popularDocuments =
+        documentController.getPopularDocuments();
 
     final User? user = FirebaseAuth.instance.currentUser;
 
@@ -46,7 +56,8 @@ class HomeView extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment:
+                                CrossAxisAlignment.start,
                             children: [
                               Text(
                                 'Bienvenue $userName 👋',
@@ -74,7 +85,7 @@ class HomeView extends StatelessWidget {
 
                         const SizedBox(width: 16),
 
-                        // Avatar personnalisé
+                        // Avatar
                         Container(
                           width: 48,
                           height: 48,
@@ -105,36 +116,46 @@ class HomeView extends StatelessWidget {
                     // =========================
                     // RECHERCHE
                     // =========================
-                    Container(
-                      height: 64,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.05),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
+                    InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const DocumentsView(),
                           ),
-                        ],
-                      ),
-                      child: const TextField(
-                        decoration: InputDecoration(
-                          hintText: 'Rechercher un document...',
-                          hintStyle: TextStyle(
-                            color: Color(0xFF767683),
-                            fontSize: 16,
-                          ),
-                          prefixIcon: Icon(
-                            Icons.search,
-                            size: 32,
-                            color: Color(0xFF767683),
-                          ),
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(
-                            vertical: 18,
-                            horizontal: 8,
-                          ),
+                        );
+                      },
+                      child: Container(
+                        height: 64,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.05),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: const Row(
+                          children: [
+                            SizedBox(width: 16),
+                            Icon(
+                              Icons.search,
+                              size: 32,
+                              color: Color(0xFF767683),
+                            ),
+                            SizedBox(width: 12),
+                            Text(
+                              'Rechercher un document...',
+                              style: TextStyle(
+                                color: Color(0xFF767683),
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -150,13 +171,17 @@ class HomeView extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.only(top: 12),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment:
+                      CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: 20),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisAlignment:
+                            MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment:
+                            CrossAxisAlignment.end,
                         children: [
                           const Text(
                             'Documents populaires',
@@ -169,7 +194,13 @@ class HomeView extends StatelessWidget {
 
                           TextButton(
                             onPressed: () {
-                              // Navigation vers le catalogue à venir.
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      const DocumentsView(),
+                                ),
+                              );
                             },
                             child: const Text(
                               'Voir tout',
@@ -188,36 +219,35 @@ class HomeView extends StatelessWidget {
 
                     SizedBox(
                       height: 290,
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        children: [
-                          _buildPopularDocumentCard(
-                            icon: Icons.work_outline,
-                            title: 'Demande de stage',
-                            description:
-                                'Modèle standard pour postuler à une offre de stage professionnel.',
-                          ),
+                      child: popularDocuments.isEmpty
+                          ? const Center(
+                              child: Text(
+                                'Aucun document populaire.',
+                                style: TextStyle(
+                                  color: secondaryTextColor,
+                                ),
+                              ),
+                            )
+                          : ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              padding:
+                                  const EdgeInsets.symmetric(
+                                horizontal: 20,
+                              ),
+                              itemCount: popularDocuments.length,
+                              separatorBuilder:
+                                  (context, index) =>
+                                      const SizedBox(width: 16),
+                              itemBuilder: (context, index) {
+                                final DocumentModel document =
+                                    popularDocuments[index];
 
-                          const SizedBox(width: 16),
-
-                          _buildPopularDocumentCard(
-                            icon: Icons.edit_document,
-                            title: 'Lettre de motivation',
-                            description:
-                                'Structure professionnelle pour accompagner votre CV.',
-                          ),
-
-                          const SizedBox(width: 16),
-
-                          _buildPopularDocumentCard(
-                            icon: Icons.badge_outlined,
-                            title: 'Demande d’emploi',
-                            description:
-                                'Format officiel pour une candidature spontanée.',
-                          ),
-                        ],
-                      ),
+                                return _buildPopularDocumentCard(
+                                  context,
+                                  document,
+                                );
+                              },
+                            ),
                     ),
                   ],
                 ),
@@ -229,9 +259,11 @@ class HomeView extends StatelessWidget {
             // =========================
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
+                padding:
+                    const EdgeInsets.fromLTRB(20, 24, 20, 32),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment:
+                      CrossAxisAlignment.start,
                   children: [
                     const Text(
                       'Catégories',
@@ -246,7 +278,8 @@ class HomeView extends StatelessWidget {
 
                     GridView.builder(
                       shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
+                      physics:
+                          const NeverScrollableScrollPhysics(),
                       itemCount: categories.length,
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
@@ -256,8 +289,12 @@ class HomeView extends StatelessWidget {
                         childAspectRatio: 0.95,
                       ),
                       itemBuilder: (context, index) {
+                        final DocumentCategory category =
+                            categories[index];
+
                         return _buildCategoryCard(
-                          categories[index],
+                          context,
+                          category,
                         );
                       },
                     ),
@@ -271,107 +308,123 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  Widget _buildPopularDocumentCard({
-    required IconData icon,
-    required String title,
-    required String description,
-  }) {
-    return Container(
-      width: 240,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: const Color(0xFFE8E8E8),
+  // =========================
+  // DOCUMENT POPULAIRE
+  // =========================
+  Widget _buildPopularDocumentCard(
+    BuildContext context,
+    DocumentModel document,
+  ) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(24),
+      onTap: () {
+        _openDocument(context, document);
+      },
+      child: Container(
+        width: 240,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: const Color(0xFFE8E8E8),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: primaryColor.withValues(alpha: 0.05),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
-        boxShadow: [
-          BoxShadow(
-            color: primaryColor.withValues(alpha: 0.05),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: const BoxDecoration(
-              color: secondaryContainer,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              icon,
-              color: secondaryTextColor,
-            ),
-          ),
-
-          const SizedBox(height: 12),
-
-          Text(
-            title,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: textColor,
-            ),
-          ),
-
-          const SizedBox(height: 8),
-
-          Expanded(
-            child: Text(
-              description,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 14,
-                height: 1.45,
+        child: Column(
+          crossAxisAlignment:
+              CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: const BoxDecoration(
+                color: secondaryContainer,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                _getIcon(document.icon),
                 color: secondaryTextColor,
               ),
             ),
-          ),
 
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
 
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Disponible',
-                style: TextStyle(
-                  color: primaryColor,
+            Text(
+              document.title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: textColor,
+              ),
+            ),
+
+            const SizedBox(height: 8),
+
+            Expanded(
+              child: Text(
+                document.description,
+                maxLines: 4,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
                   fontSize: 14,
-                  fontWeight: FontWeight.w600,
+                  height: 1.45,
+                  color: secondaryTextColor,
                 ),
               ),
+            ),
 
-              Container(
-                width: 40,
-                height: 40,
-                decoration: const BoxDecoration(
-                  color: Color(0xFF1A237E),
-                  shape: BoxShape.circle,
+            const SizedBox(height: 12),
+
+            Row(
+              mainAxisAlignment:
+                  MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Disponible',
+                  style: TextStyle(
+                    color: primaryColor,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-                child: const Icon(
-                  Icons.download,
-                  color: Colors.white,
-                  size: 20,
+
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF1A237E),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.arrow_forward,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildCategoryCard(DocumentCategory category) {
+  // =========================
+  // CATÉGORIE
+  // =========================
+  Widget _buildCategoryCard(
+    BuildContext context,
+    DocumentCategory category,
+  ) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -390,12 +443,20 @@ class HomeView extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: () {
-          // Navigation vers les documents de la catégorie à venir.
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => DocumentsView(
+                initialCategory: category.title,
+              ),
+            ),
+          );
         },
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment:
+                MainAxisAlignment.center,
             children: [
               Icon(
                 _getIcon(category.icon),
@@ -421,8 +482,79 @@ class HomeView extends StatelessWidget {
     );
   }
 
+  // =========================
+  // OUVERTURE DOCUMENT
+  // =========================
+  void _openDocument(
+    BuildContext context,
+    DocumentModel document,
+  ) {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        transitionDuration:
+            const Duration(milliseconds: 350),
+        reverseTransitionDuration:
+            const Duration(milliseconds: 250),
+        pageBuilder: (
+          context,
+          animation,
+          secondaryAnimation,
+        ) {
+          return DocumentDetailView(
+            document: document,
+          );
+        },
+        transitionsBuilder: (
+          context,
+          animation,
+          secondaryAnimation,
+          child,
+        ) {
+          final CurvedAnimation curvedAnimation =
+              CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutCubic,
+          );
+
+          return FadeTransition(
+            opacity: curvedAnimation,
+            child: SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(0.05, 0),
+                end: Offset.zero,
+              ).animate(curvedAnimation),
+              child: child,
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  // =========================
+  // ICÔNES
+  // =========================
   IconData _getIcon(String icon) {
     switch (icon) {
+      case 'stage':
+        return Icons.school_outlined;
+
+      case 'motivation':
+        return Icons.edit_document;
+
+      case 'emploi':
+        return Icons.badge_outlined;
+
+      case 'administration':
+        return Icons.account_balance_outlined;
+
+      case 'lettre':
+        return Icons.mail_outline;
+
+      case 'attestation':
+        return Icons.verified_outlined;
+
       case 'work':
         return Icons.work_outline;
 
@@ -437,9 +569,6 @@ class HomeView extends StatelessWidget {
 
       case 'folder':
         return Icons.folder_open_outlined;
-
-      case 'administration':
-        return Icons.account_balance_outlined;
 
       case 'mail':
         return Icons.mail_outline;
