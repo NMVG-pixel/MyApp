@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/history_item_model.dart';
@@ -7,10 +5,13 @@ import '../models/history_item_model.dart';
 class HistoryService {
   static const String _historyKey = 'docs_admins_history';
 
-  static Future<List<HistoryItemModel>> getHistory() async {
-    final preferences = await SharedPreferences.getInstance();
+  static final SharedPreferencesAsync _preferences =
+      SharedPreferencesAsync();
 
-    final data = preferences.getStringList(_historyKey);
+  static Future<List<HistoryItemModel>> getHistory() async {
+    final data = await _preferences.getStringList(
+      _historyKey,
+    );
 
     if (data == null || data.isEmpty) {
       return [];
@@ -38,8 +39,6 @@ class HistoryService {
   static Future<void> addHistoryItem(
     HistoryItemModel item,
   ) async {
-    final preferences = await SharedPreferences.getInstance();
-
     final existing = await getHistory();
 
     existing.removeWhere(
@@ -48,18 +47,17 @@ class HistoryService {
 
     existing.insert(0, item);
 
-    // On garde les 50 derniers documents.
-    final limitedHistory = existing.take(50).toList();
+    final limitedHistory = existing
+        .take(50)
+        .toList();
 
     final encoded = limitedHistory
         .map(
-          (element) => jsonEncode(
-            element.toMap(),
-          ),
+          (element) => element.toJson(),
         )
         .toList();
 
-    await preferences.setStringList(
+    await _preferences.setStringList(
       _historyKey,
       encoded,
     );
@@ -68,8 +66,6 @@ class HistoryService {
   static Future<void> deleteHistoryItem(
     String id,
   ) async {
-    final preferences = await SharedPreferences.getInstance();
-
     final history = await getHistory();
 
     history.removeWhere(
@@ -78,21 +74,19 @@ class HistoryService {
 
     final encoded = history
         .map(
-          (item) => jsonEncode(
-            item.toMap(),
-          ),
+          (item) => item.toJson(),
         )
         .toList();
 
-    await preferences.setStringList(
+    await _preferences.setStringList(
       _historyKey,
       encoded,
     );
   }
 
   static Future<void> clearHistory() async {
-    final preferences = await SharedPreferences.getInstance();
-
-    await preferences.remove(_historyKey);
+    await _preferences.remove(
+      _historyKey,
+    );
   }
 }

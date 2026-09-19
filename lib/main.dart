@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 
+import 'services/preferences_platform_init.dart';
 import 'views/main_navigation_view.dart';
-
 import 'views/splash_view.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  initializePreferencesPlatform();
+
   runApp(const DocsAdminsApp());
 }
 

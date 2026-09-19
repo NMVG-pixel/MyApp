@@ -3,17 +3,25 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 
 import '../models/document_model.dart';
+import '../models/history_item_model.dart';
 import '../services/document_pdf_service.dart';
+import '../services/history_service.dart';
 import 'document_result_view.dart';
 
 class DocumentGeneratingView extends StatefulWidget {
   final DocumentModel document;
   final Map<String, String> formData;
 
+  // Quand true, le document est ajouté à l'historique.
+  // Quand false, on génère simplement le document
+  // sans créer une nouvelle entrée.
+  final bool saveToHistory;
+
   const DocumentGeneratingView({
     super.key,
     required this.document,
     required this.formData,
+    this.saveToHistory = true,
   });
 
   @override
@@ -42,21 +50,43 @@ class _DocumentGeneratingViewState
 
   Future<void> _generateDocument() async {
     try {
-      // Permet de laisser apparaître clairement l'étape 3.
+      // Permet d'afficher clairement l'étape 3.
       await Future.delayed(
         const Duration(milliseconds: 500),
       );
 
       if (!mounted) return;
 
+      // Génération réelle du PDF.
       final Uint8List pdfBytes =
           await DocumentPdfService.generatePdf(
         document: widget.document,
         formData: widget.formData,
       );
 
+      // On enregistre uniquement lorsqu'il s'agit
+      // d'une nouvelle génération.
+      if (widget.saveToHistory) {
+        final historyItem = HistoryItemModel(
+          id: DateTime.now()
+              .microsecondsSinceEpoch
+              .toString(),
+          documentId: widget.document.id,
+          documentTitle: widget.document.title,
+          createdAt: DateTime.now(),
+          formData: Map<String, String>.from(
+            widget.formData,
+          ),
+        );
+
+        await HistoryService.addHistoryItem(
+          historyItem,
+        );
+      }
+
       if (!mounted) return;
 
+      // Petite pause avant l'ouverture du résultat.
       await Future.delayed(
         const Duration(milliseconds: 500),
       );
@@ -100,7 +130,9 @@ class _DocumentGeneratingViewState
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 25),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 25,
+          ),
           child: Column(
             children: [
               const SizedBox(height: 20),
@@ -109,7 +141,8 @@ class _DocumentGeneratingViewState
               // PROGRESSION
               // =========================
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment:
+                    MainAxisAlignment.spaceBetween,
                 children: const [
                   Text(
                     'Étape 3 sur 3',
@@ -157,7 +190,8 @@ class _DocumentGeneratingViewState
 
   Widget _buildLoading() {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment:
+          MainAxisAlignment.center,
       children: [
         ScaleTransition(
           scale: Tween<double>(
@@ -173,7 +207,9 @@ class _DocumentGeneratingViewState
             width: 100,
             height: 100,
             decoration: BoxDecoration(
-              color: const Color(0xFF000666).withOpacity(0.08),
+              color: const Color(
+                0xFF000666,
+              ).withOpacity(0.08),
               shape: BoxShape.circle,
             ),
             child: const Icon(
@@ -223,7 +259,8 @@ class _DocumentGeneratingViewState
 
   Widget _buildError() {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment:
+          MainAxisAlignment.center,
       children: [
         const Icon(
           Icons.error_outline,
@@ -267,7 +304,8 @@ class _DocumentGeneratingViewState
               _generateDocument();
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF000666),
+              backgroundColor:
+                  const Color(0xFF000666),
               foregroundColor: Colors.white,
             ),
             child: const Text(
