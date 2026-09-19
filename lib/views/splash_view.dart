@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'main_navigation_view.dart';
+import 'auth_gate.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
@@ -33,15 +33,15 @@ class _SplashViewState extends State<SplashView>
     _animationController.forward();
 
     Timer(const Duration(seconds: 2), () {
-  if (!mounted) return;
+      if (!mounted) return;
 
-  Navigator.pushReplacement(
-    context,
-    MaterialPageRoute(
-      builder: (context) => const MainNavigationView(),
-    ),
-  );
-});
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const AuthGate(),
+        ),
+      );
+    });
   }
 
   @override
@@ -66,4 +66,3 @@ class _SplashViewState extends State<SplashView>
     );
   }
 }
-
