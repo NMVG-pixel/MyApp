@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../controllers/home_controller.dart';
@@ -16,6 +17,16 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     final HomeController controller = HomeController();
     final List<DocumentCategory> categories = controller.getCategories();
+
+    final User? user = FirebaseAuth.instance.currentUser;
+
+    final String userName =
+        user?.displayName?.trim().isNotEmpty == true
+            ? user!.displayName!.trim()
+            : 'Utilisateur';
+
+    final String firstLetter =
+        userName.isNotEmpty ? userName[0].toUpperCase() : 'U';
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -37,16 +48,18 @@ class HomeView extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'Bienvenue dans votre\napplication Jean',
-                                style: TextStyle(
+                              Text(
+                                'Bienvenue $userName 👋',
+                                style: const TextStyle(
                                   color: primaryColor,
                                   fontSize: 24,
                                   fontWeight: FontWeight.w700,
                                   height: 1.33,
                                 ),
                               ),
+
                               const SizedBox(height: 8),
+
                               const Text(
                                 'Trouvez rapidement vos documents administratifs',
                                 style: TextStyle(
@@ -58,22 +71,30 @@ class HomeView extends StatelessWidget {
                             ],
                           ),
                         ),
+
                         const SizedBox(width: 16),
+
+                        // Avatar personnalisé
                         Container(
                           width: 48,
                           height: 48,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Colors.grey.shade200,
+                            color: primaryColor,
                             border: Border.all(
                               color: Colors.white,
                               width: 2,
                             ),
                           ),
-                          child: const Icon(
-                            Icons.person,
-                            color: secondaryTextColor,
-                            size: 28,
+                          child: Center(
+                            child: Text(
+                              firstLetter,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -145,6 +166,7 @@ class HomeView extends StatelessWidget {
                               fontWeight: FontWeight.w600,
                             ),
                           ),
+
                           TextButton(
                             onPressed: () {
                               // Navigation vers le catalogue à venir.
@@ -161,7 +183,9 @@ class HomeView extends StatelessWidget {
                         ],
                       ),
                     ),
+
                     const SizedBox(height: 4),
+
                     SizedBox(
                       height: 290,
                       child: ListView(
@@ -174,14 +198,18 @@ class HomeView extends StatelessWidget {
                             description:
                                 'Modèle standard pour postuler à une offre de stage professionnel.',
                           ),
+
                           const SizedBox(width: 16),
+
                           _buildPopularDocumentCard(
                             icon: Icons.edit_document,
                             title: 'Lettre de motivation',
                             description:
                                 'Structure professionnelle pour accompagner votre CV.',
                           ),
+
                           const SizedBox(width: 16),
+
                           _buildPopularDocumentCard(
                             icon: Icons.badge_outlined,
                             title: 'Demande d’emploi',
@@ -213,7 +241,9 @@ class HomeView extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
+
                     const SizedBox(height: 16),
+
                     GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
@@ -278,7 +308,9 @@ class HomeView extends StatelessWidget {
               color: secondaryTextColor,
             ),
           ),
+
           const SizedBox(height: 12),
+
           Text(
             title,
             maxLines: 1,
@@ -289,7 +321,9 @@ class HomeView extends StatelessWidget {
               color: textColor,
             ),
           ),
+
           const SizedBox(height: 8),
+
           Expanded(
             child: Text(
               description,
@@ -302,7 +336,9 @@ class HomeView extends StatelessWidget {
               ),
             ),
           ),
+
           const SizedBox(height: 12),
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -314,6 +350,7 @@ class HomeView extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                 ),
               ),
+
               Container(
                 width: 40,
                 height: 40,
@@ -365,7 +402,9 @@ class HomeView extends StatelessWidget {
                 color: primaryColor,
                 size: 32,
               ),
+
               const SizedBox(height: 8),
+
               Text(
                 category.title,
                 textAlign: TextAlign.center,
