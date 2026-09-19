@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/document_model.dart';
+import 'document_generating_view.dart';
 
 class DocumentPreviewView extends StatelessWidget {
   final DocumentModel document;
@@ -136,9 +137,9 @@ class DocumentPreviewView extends StatelessWidget {
 
                   const SizedBox(height: 25),
 
-                  Text(
+                  const Text(
                     'Madame, Monsieur,',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       height: 1.7,
                     ),
@@ -164,7 +165,9 @@ class DocumentPreviewView extends StatelessWidget {
                         fontSize: 14,
                       ),
                     ),
+
                     const SizedBox(height: 8),
+
                     Text(
                       formData['message']!,
                       style: const TextStyle(
@@ -172,6 +175,7 @@ class DocumentPreviewView extends StatelessWidget {
                         height: 1.7,
                       ),
                     ),
+
                     const SizedBox(height: 24),
                   ],
 
@@ -250,7 +254,15 @@ class DocumentPreviewView extends StatelessWidget {
             height: 62,
             child: ElevatedButton(
               onPressed: () {
-                // Génération PDF à l'étape suivante.
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DocumentGeneratingView(
+                      document: document,
+                      formData: formData,
+                    ),
+                  ),
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF252C8F),
