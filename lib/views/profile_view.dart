@@ -6,13 +6,13 @@ import '../services/auth_service.dart';
 import 'auth_gate.dart';
 
 class ProfileView extends StatelessWidget {
-  ProfileView({super.key});
-
-  final AuthService _authService = AuthService();
+  const ProfileView({super.key});
 
   Future<void> _logout(BuildContext context) async {
+    final AuthService authService = AuthService();
+
     try {
-      await _authService.logout();
+      await authService.logout();
 
       if (!context.mounted) return;
 
@@ -27,7 +27,9 @@ class ProfileView extends StatelessWidget {
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Impossible de se déconnecter pour le moment.'),
+          content: Text(
+            'Impossible de se déconnecter pour le moment.',
+          ),
         ),
       );
     }
@@ -80,7 +82,9 @@ class ProfileView extends StatelessWidget {
       if (!launched && context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Impossible d’ouvrir votre messagerie.'),
+            content: Text(
+              'Impossible d’ouvrir votre messagerie.',
+            ),
           ),
         );
       }
@@ -89,7 +93,9 @@ class ProfileView extends StatelessWidget {
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Impossible d’ouvrir votre messagerie.'),
+          content: Text(
+            'Impossible d’ouvrir votre messagerie.',
+          ),
         ),
       );
     }
@@ -104,7 +110,8 @@ class ProfileView extends StatelessWidget {
             ? user!.displayName!.trim()
             : 'Utilisateur';
 
-    final String userEmail = user?.email ?? 'Aucune adresse e-mail';
+    final String userEmail =
+        user?.email ?? 'Aucune adresse e-mail';
 
     return Scaffold(
       backgroundColor: const Color(0xFFF9F9F9),
@@ -166,7 +173,7 @@ class ProfileView extends StatelessWidget {
 
             const SizedBox(height: 30),
 
-            // Informations du compte
+            // Mon compte
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
@@ -205,7 +212,8 @@ class ProfileView extends StatelessWidget {
                       const SizedBox(width: 14),
                       Expanded(
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment:
+                              CrossAxisAlignment.start,
                           children: [
                             const Text(
                               'Nom',
@@ -248,7 +256,8 @@ class ProfileView extends StatelessWidget {
                       const SizedBox(width: 14),
                       Expanded(
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment:
+                              CrossAxisAlignment.start,
                           children: [
                             const Text(
                               'Adresse e-mail',
@@ -286,7 +295,8 @@ class ProfileView extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment:
+                    CrossAxisAlignment.start,
                 children: [
                   const Text(
                     'Contactez-nous',
@@ -300,7 +310,8 @@ class ProfileView extends StatelessWidget {
                   const SizedBox(height: 8),
 
                   const Text(
-                    'Une question ou un problème ? Contactez-nous directement.',
+                    'Une question ou un problème ? '
+                    'Contactez-nous directement.',
                     style: TextStyle(
                       fontSize: 14,
                       color: Color(0xFF777777),
@@ -319,7 +330,8 @@ class ProfileView extends StatelessWidget {
                         border: Border.all(
                           color: const Color(0xFFE5E5E5),
                         ),
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius:
+                            BorderRadius.circular(14),
                       ),
                       child: const Row(
                         children: [
@@ -330,7 +342,8 @@ class ProfileView extends StatelessWidget {
                           SizedBox(width: 14),
                           Expanded(
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment:
+                                  CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   'WhatsApp',
@@ -373,7 +386,8 @@ class ProfileView extends StatelessWidget {
                         border: Border.all(
                           color: const Color(0xFFE5E5E5),
                         ),
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius:
+                            BorderRadius.circular(14),
                       ),
                       child: const Row(
                         children: [
@@ -384,7 +398,8 @@ class ProfileView extends StatelessWidget {
                           SizedBox(width: 14),
                           Expanded(
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment:
+                                  CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   'E-mail',
